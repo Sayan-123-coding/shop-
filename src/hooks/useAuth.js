@@ -6,6 +6,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminRole, setAdminRole] = useState(null);
+  const [shopId, setShopId] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -15,6 +16,7 @@ export function useAuth() {
         if (mounted) {
           setIsAdmin(false);
           setAdminRole(null);
+          setShopId(null);
           setLoading(false);
         }
         return;
@@ -23,9 +25,9 @@ export function useAuth() {
       try {
         const { data, error } = await supabase
           .from('admin_users')
-          .select('role')
+          .select('role, shop_id')
           .eq('user_id', userSession.user.id)
-          .single();
+          .maybeSingle();
 
         if (error || !data) {
           throw new Error('Not an admin');
@@ -34,13 +36,13 @@ export function useAuth() {
         if (mounted) {
           setIsAdmin(true);
           setAdminRole(data.role);
+          setShopId(data.shop_id);
         }
       } catch (err) {
         if (mounted) {
           setIsAdmin(false);
           setAdminRole(null);
-          // If they aren't an admin but have a session, we should probably sign them out
-          // to prevent ghost sessions, but for now we just mark them as non-admin.
+          setShopId(null);
         }
       } finally {
         if (mounted) {
@@ -71,5 +73,5 @@ export function useAuth() {
     };
   }, []);
 
-  return { session, loading, user: session?.user ?? null, isAdmin, adminRole };
+  return { session, loading, user: session?.user ?? null, isAdmin, adminRole, shopId };
 }

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
+import { ToastProvider } from './components/ui/Toast';
 
 // Layouts
 import PublicLayout from './components/layout/PublicLayout';
@@ -43,48 +44,50 @@ function PublicOnlyRoute({ children }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/collections" element={<Collections />} />
-          <Route path="/collections/:category" element={<CategoryPage />} />
-          <Route path="/product/:slug" element={<ProductDetails />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-        </Route>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/collections/:category" element={<CategoryPage />} />
+            <Route path="/product/:slug" element={<ProductDetails />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
 
-        {/* Admin Login Route (Public Only) */}
-        <Route 
-          path="/admin/login" 
-          element={
-            <PublicOnlyRoute>
-              <AdminLogin />
-            </PublicOnlyRoute>
-          } 
-        />
+          {/* Admin Login Route (Public Only) */}
+          <Route 
+            path="/admin/login" 
+            element={
+              <PublicOnlyRoute>
+                <AdminLogin />
+              </PublicOnlyRoute>
+            } 
+          />
 
-        {/* Protected Admin Routes */}
-        <Route 
-          path="/admin" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-          <Route path="products/new" element={<ProductForm />} />
-          <Route path="products/:id/edit" element={<ProductForm />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+          {/* Protected Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="products/new" element={<ProductForm />} />
+            <Route path="products/:id/edit" element={<ProductForm />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
 
-        {/* 404 Catch all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* 404 Catch all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }

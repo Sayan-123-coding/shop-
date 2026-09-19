@@ -3,13 +3,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
   font-weight: var(--font-weight-medium);
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
   border: 1px solid transparent;
   outline: none;
+  gap: 8px;
 }
 
 .btn:disabled {
@@ -51,26 +54,47 @@
 
 .form-input {
   width: 100%;
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: 0 14px;
+  min-height: 44px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   background-color: var(--color-bg-surface);
-  transition: border-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  font-size: var(--text-sm);
+}
+
+select.form-input {
+  padding: 0 40px 0 14px;
+}
+
+textarea.form-input {
+  padding: 12px 14px;
+  min-height: 120px;
+  resize: vertical;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 90, 0, 0.15);
 }
 
 /* Cards */
 .card {
   background-color: var(--color-bg-surface);
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   border: 1px solid var(--color-border);
   overflow: hidden;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  padding: 32px;
+}
+
+.card.card-sm {
+  padding: 20px;
+}
+
+.card-section {
+  margin-bottom: 24px;
 }
 
 .card-hover:hover {
