@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Eye, EyeOff, Lock, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowLeft, ShieldCheck, Store } from 'lucide-react';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -82,75 +82,90 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 items-center justify-center p-4">
-      <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors">
-        <ArrowLeft size={16} />
-        Back to Website
-      </Link>
+    <div className="login-page">
+      <header className="login-header">
+        <Link to="/" className="login-nav-link">
+          <ArrowLeft size={16} />
+          Back to Website
+        </Link>
+        <div className="login-header-brand">
+          <Store size={16} />
+          Store Admin
+        </div>
+      </header>
 
-      <div className="card w-full max-w-md p-8 bg-white shadow-lg">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center mb-4">
+      <main className="login-container">
+        <div className="login-card">
+          <div className="login-icon-container">
             <Lock size={24} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Shoe Store Demo</h1>
-          <p className="text-gray-500 mt-2">Sign in to manage your catalogue</p>
-        </div>
+          
+          <div className="login-title-primary">Welcome back</div>
+          <h1 className="login-title-secondary">Shoe Store Demo</h1>
+          <p className="login-subtitle">Sign in to manage your catalogue</p>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-5">
-          {error && (
-            <div className="p-3 bg-red-50 text-red-600 border border-red-200 rounded-md text-sm text-center">
-              {error}
-            </div>
-          )}
+          <form onSubmit={handleLogin} className="login-form">
+            {error && (
+              <div className="login-error">
+                {error}
+              </div>
+            )}
 
-          <div className="form-group mb-0">
-            <label className="form-label" htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              className="form-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@example.com"
-              autoComplete="email"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group mb-0 relative">
-            <label className="form-label" htmlFor="password">Password</label>
-            <div className="relative">
+            <div className="form-group mb-0">
+              <label className="form-label" htmlFor="email">Email</label>
               <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                className="form-input pr-10"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                autoComplete="current-password"
+                id="email"
+                type="email"
+                className="form-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
+                autoComplete="email"
                 disabled={loading}
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={loading}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
-          </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary w-full mt-2 py-3"
-            disabled={loading}
-          >
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
-      </div>
+            <div className="form-group mb-0">
+              <label className="form-label" htmlFor="password">Password</label>
+              <div className="login-input-wrapper">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className="form-input"
+                  style={{ paddingRight: '40px' }}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className="btn btn-primary w-full"
+              style={{ marginTop: '8px' }}
+              disabled={loading}
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="login-footer">
+            <ShieldCheck size={14} />
+            Secure admin access
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
