@@ -139,7 +139,16 @@ export const productService = {
           .from('product-images')
           .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('[IMAGE UPLOAD DEBUG]', {
+            message: uploadError?.message,
+            name: uploadError?.name,
+            statusCode: uploadError?.statusCode,
+            error: uploadError?.error,
+            filePath: filePath.replace(/[0-9a-fA-F-]{36}/g, '<UUID>')
+          });
+          throw uploadError;
+        }
 
         // Get public URL
         const { data: publicUrlData } = supabase.storage

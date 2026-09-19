@@ -165,7 +165,7 @@ export default function Products() {
                     </td>
                     <td>{product.category?.name || '-'}</td>
                     <td className="font-medium">
-                      {new Intl.NumberFormat('en-IN', { style: 'currency', currency: product.currency }).format(product.price)}
+                      {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(product.price)}
                     </td>
                     <td>
                       <span className={`badge ${

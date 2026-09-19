@@ -241,6 +241,24 @@ WITH CHECK (
 -- ==========================================
 -- Note: Supabase Storage operates in a separate schema "storage"
 
+-- Helper Function for Storage Ownership
+CREATE OR REPLACE FUNCTION public.can_admin_upload_product_image(p_shop_id uuid, p_product_id uuid)
+RETURNS boolean AS $$
+BEGIN
+    RETURN (
+        EXISTS (
+            SELECT 1 FROM admin_users 
+            WHERE user_id = auth.uid() AND shop_id = p_shop_id
+        )
+        AND 
+        EXISTS (
+            SELECT 1 FROM products 
+            WHERE id = p_product_id AND shop_id = p_shop_id
+        )
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- Insert bucket if it doesn't exist
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('product-images', 'product-images', true)
@@ -266,15 +284,9 @@ WITH CHECK (
     bucket_id = 'product-images' 
     AND (string_to_array(name, '/'))[1] = 'shop'
     AND (string_to_array(name, '/'))[3] = 'products'
-    AND EXISTS (
-        SELECT 1 FROM public.admin_users 
-        WHERE user_id = auth.uid() 
-        AND shop_id::text = (string_to_array(name, '/'))[2]
-    )
-    AND EXISTS (
-        SELECT 1 FROM public.products 
-        WHERE id::text = (string_to_array(name, '/'))[4]
-        AND shop_id::text = (string_to_array(name, '/'))[2]
+    AND public.can_admin_upload_product_image(
+        (string_to_array(name, '/'))[2]::uuid,
+        (string_to_array(name, '/'))[4]::uuid
     )
 );
 
@@ -286,15 +298,9 @@ USING (
     bucket_id = 'product-images' 
     AND (string_to_array(name, '/'))[1] = 'shop'
     AND (string_to_array(name, '/'))[3] = 'products'
-    AND EXISTS (
-        SELECT 1 FROM public.admin_users 
-        WHERE user_id = auth.uid() 
-        AND shop_id::text = (string_to_array(name, '/'))[2]
-    )
-    AND EXISTS (
-        SELECT 1 FROM public.products 
-        WHERE id::text = (string_to_array(name, '/'))[4]
-        AND shop_id::text = (string_to_array(name, '/'))[2]
+    AND public.can_admin_upload_product_image(
+        (string_to_array(name, '/'))[2]::uuid,
+        (string_to_array(name, '/'))[4]::uuid
     )
 );
 
@@ -306,15 +312,9 @@ USING (
     bucket_id = 'product-images' 
     AND (string_to_array(name, '/'))[1] = 'shop'
     AND (string_to_array(name, '/'))[3] = 'products'
-    AND EXISTS (
-        SELECT 1 FROM public.admin_users 
-        WHERE user_id = auth.uid() 
-        AND shop_id::text = (string_to_array(name, '/'))[2]
-    )
-    AND EXISTS (
-        SELECT 1 FROM public.products 
-        WHERE id::text = (string_to_array(name, '/'))[4]
-        AND shop_id::text = (string_to_array(name, '/'))[2]
+    AND public.can_admin_upload_product_image(
+        (string_to_array(name, '/'))[2]::uuid,
+        (string_to_array(name, '/'))[4]::uuid
     )
 );
 
