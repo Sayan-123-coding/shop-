@@ -10,6 +10,8 @@ export default function PublicNavbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [shop, setShop] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [lastClickTime, setLastClickTime] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -30,6 +32,22 @@ export default function PublicNavbar() {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
   }, [location.pathname]);
+
+  const handleLogoClick = (e) => {
+    const now = Date.now();
+    if (now - lastClickTime > 2000) {
+      setClickCount(1);
+    } else {
+      const newCount = clickCount + 1;
+      setClickCount(newCount);
+      if (newCount >= 7) {
+        e.preventDefault();
+        navigate('/admin/login');
+        setClickCount(0);
+      }
+    }
+    setLastClickTime(now);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -53,7 +71,7 @@ export default function PublicNavbar() {
         <div className="store-navbar__inner">
           
           {/* Logo / Shop Name */}
-          <Link to="/" className="store-navbar__brand">
+          <Link to="/" className="store-navbar__brand" onClick={handleLogoClick}>
             <span>{shop?.name || 'Shoe Store'}</span>
           </Link>
 
