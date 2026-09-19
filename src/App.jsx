@@ -23,20 +23,20 @@ import Settings from './pages/admin/Settings';
 
 // Auth Guard for Protected Routes
 function ProtectedRoute({ children }) {
-  const { session, loading } = useAuth();
+  const { session, loading, isAdmin } = useAuth();
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
-  if (!session) return <Navigate to="/admin/login" replace />;
+  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (!session || !isAdmin) return <Navigate to="/admin/login" replace />;
 
   return children ? children : <Outlet />;
 }
 
 // Public Route Guard (prevents logged in users from seeing login page)
 function PublicOnlyRoute({ children }) {
-  const { session, loading } = useAuth();
+  const { session, loading, isAdmin } = useAuth();
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
-  if (session) return <Navigate to="/admin" replace />;
+  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (session && isAdmin) return <Navigate to="/admin" replace />;
 
   return children;
 }
