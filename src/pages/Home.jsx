@@ -40,12 +40,33 @@ export default function Home() {
     fetchHomeData();
   }, []);
 
+  // Video playlist for the background
+  const heroVideos = [
+    '/videos/shoe-drop.mp4',
+    '/videos/sandal-carpet.mp4',
+    '/videos/clogs-angles.mp4'
+  ];
+  const [currentVideo, setCurrentVideo] = useState(0);
+
   return (
     <div className="home-page">
       
       {/* 2. Hero Section */}
-      <section className="store-hero store-hero--with-image">
+      <section className="store-hero">
+        {/* Fallback image if videos haven't loaded or don't exist yet */}
         <div className="store-hero__bg-image" style={{ backgroundImage: "url('/images/hero-shoes.jpg')" }}></div>
+        
+        {/* Looping Background Videos */}
+        <video
+          key={heroVideos[currentVideo]}
+          src={heroVideos[currentVideo]}
+          autoPlay
+          muted
+          playsInline
+          onEnded={() => setCurrentVideo((prev) => (prev + 1) % heroVideos.length)}
+          className="store-hero__bg-video"
+        />
+
         <div className="store-hero__overlay"></div>
         <div className="store-container store-hero__content-wrap">
           <div className="store-hero__content">

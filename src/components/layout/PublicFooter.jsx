@@ -50,6 +50,23 @@ export default function PublicFooter() {
               </a>
             </div>
           </div>
+
+          {/* Column 4: Location Map */}
+          <div className="store-footer__col">
+            <h4 className="store-footer__heading">Location</h4>
+            <div style={{ width: '100%', height: '150px', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+              <iframe
+                src={businessConfig.demoLocation.mapEmbedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Store Location"
+              ></iframe>
+            </div>
+          </div>
         </div>
 
         {/* Bottom */}
