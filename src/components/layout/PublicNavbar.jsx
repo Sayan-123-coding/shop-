@@ -65,8 +65,11 @@ export default function PublicNavbar() {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const isHomePage = location.pathname === '/';
+  const isScrolledOrInner = scrolled || !isHomePage;
+
   return (
-    <header className={`store-navbar ${scrolled ? 'store-navbar--scrolled' : ''}`}>
+    <header className={`store-navbar ${isScrolledOrInner ? 'store-navbar--scrolled' : ''}`}>
       <div className="store-container">
         <div className="store-navbar__inner">
           
