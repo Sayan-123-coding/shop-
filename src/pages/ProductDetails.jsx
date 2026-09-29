@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
 import { catalogueService } from '../services/catalogueService';
+import BookNowModal from '../components/product/BookNowModal';
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -11,6 +12,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showBookModal, setShowBookModal] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -83,8 +85,8 @@ export default function ProductDetails() {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
   };
 
-  const handleContact = () => {
-    navigate('/contact', { state: { productContext: product.name } });
+  const handleBookNow = () => {
+    setShowBookModal(true);
   };
 
   return (
@@ -162,14 +164,22 @@ export default function ProductDetails() {
             </div>
 
             <div className="product-info__actions">
-              <button onClick={handleContact} className="store-btn store-btn--primary store-btn--full">
-                Contact Store
+              <button onClick={handleBookNow} className="store-btn store-btn--primary store-btn--full">
+                Book Now
               </button>
             </div>
           </div>
 
         </div>
       </div>
+      
+      {showBookModal && (
+        <BookNowModal 
+          product={product} 
+          shop={shop} 
+          onClose={() => setShowBookModal(false)} 
+        />
+      )}
     </div>
   );
 }

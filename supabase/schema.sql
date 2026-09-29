@@ -332,3 +332,109 @@ VALUES (
     'Welcome to our digital catalogue.'
 );
 */
+
+-- ==========================================
+-- 8. ORDERS (WHATSAPP ORDERING)
+-- ==========================================
+
+-- orders Table
+CREATE TABLE IF NOT EXISTS orders (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id text NOT NULL UNIQUE,
+    shop_id uuid NOT NULL REFERENCES shops(id) ON DELETE CASCADE,
+    customer_name text NOT NULL,
+    customer_phone text NOT NULL,
+    customer_address text NOT NULL,
+    customer_latitude numeric(10, 8),
+    customer_longitude numeric(11, 8),
+    subtotal numeric(12,2) NOT NULL,
+    total numeric(12,2) NOT NULL,
+    status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'cancelled')),
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
+);
+
+-- order_items Table
+CREATE TABLE IF NOT EXISTS order_items (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id uuid NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_id uuid REFERENCES products(id) ON DELETE SET NULL,
+    product_name text NOT NULL,
+    sku text,
+    quantity integer NOT NULL DEFAULT 1,
+    size text NOT NULL,
+    unit_price numeric(12,2) NOT NULL,
+    total numeric(12,2) NOT NULL,
+    created_at timestamptz DEFAULT now()
+);
+
+-- Triggers for updated_at
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
+CREATE TRIGGER update_orders_updated_at
+    BEFORE UPDATE ON orders
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_orders_shop_id ON orders(shop_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+
+-- RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+
+-- Policies for orders
+-- Public can INSERT orders (to place an order)
+CREATE POLICY "Public can insert orders"
+ON orders FOR INSERT
+WITH CHECK (true);
+
+-- Public can SELECT orders they created (via order_id for receipt)
+CREATE POLICY "Public can view receipt"
+ON orders FOR SELECT
+USING (true);
+
+-- Admins can manage their shop orders
+CREATE POLICY "Admins can manage their shop orders"
+ON orders FOR ALL
+USING (is_admin(shop_id))
+WITH CHECK (is_admin(shop_id));
+
+-- Policies for order_items
+-- Public can INSERT order items
+CREATE POLICY "Public can insert order items"
+ON order_items FOR INSERT
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM orders
+        WHERE orders.id = order_items.order_id
+    )
+);
+
+-- Public can SELECT order items for receipt
+CREATE POLICY "Public can view order items for receipt"
+ON order_items FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM orders
+        WHERE orders.id = order_items.order_id
+    )
+);
+
+-- Admins can manage their shop order items
+CREATE POLICY "Admins can manage their shop order items"
+ON order_items FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM orders
+        WHERE orders.id = order_items.order_id
+        AND is_admin(orders.shop_id)
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM orders
+        WHERE orders.id = order_items.order_id
+        AND is_admin(orders.shop_id)
+    )
+);
