@@ -13,6 +13,7 @@ import CategoryPage from './pages/CategoryPage';
 import ProductDetails from './pages/ProductDetails';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Receipt from './pages/Receipt';
 
 // Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/collections" element={<Collections />} />
             <Route path="/collections/:category" element={<CategoryPage />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
+            <Route path="/receipt/:orderId" element={<Receipt />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
